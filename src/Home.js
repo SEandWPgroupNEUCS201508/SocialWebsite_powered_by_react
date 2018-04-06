@@ -5,14 +5,9 @@ import {
     Link
 } from 'react-router-dom'
 import App from "./App";
+import MainPage from "./MainPage"
 
 
-
-const About = () => (
-    <div>
-        <h2>About</h2>
-    </div>
-)
 
 const Topic = ({ match }) => (
     <div>
@@ -61,7 +56,7 @@ const BasicExample = () => (
                 <hr/>
 
                 <Route exact path="/" component={App}/>
-                <Route path="/about" component={About}/>
+                <Route path="/about" component={MainPage}/>
                 <Route path="/topics" component={Topics}/>
             </div>
 

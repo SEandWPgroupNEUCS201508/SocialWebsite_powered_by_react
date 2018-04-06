@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { DatePicker } from 'antd';
 import { Input } from 'antd';
 import 'emoji-mart/css/emoji-mart.css'
-import { Picker } from 'emoji-mart'
 import { Button } from 'antd';
-import { Alert } from 'antd';
 import 'antd/dist/antd.css';
 
 
@@ -21,16 +18,21 @@ class App extends Component {
         if(!data.username) return alert('用户名不能为空');
         if(!data.password) return alert('密码不能为空');
 
-        fetch('http://www.foo.com/api/signup', {
+        fetch('http://127.0.0.1:8080', {
+            credentials: 'include',
             method: 'POST',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(data)
         })
         .then(function(data) {
-            console.log('request succeeded with JSON response', data)
+            let p = data.json()
+            p.then(function(json) {
+                alert(json['state']);
+                console.log('request succeeded with JSON response', json);
+            });
         })
         .catch(function(error) {
             console.log('request failed', error)
