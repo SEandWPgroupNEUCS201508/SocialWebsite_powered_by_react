@@ -18,7 +18,7 @@ class App extends Component {
         if(!data.username) return alert('用户名不能为空');
         if(!data.password) return alert('密码不能为空');
 
-        fetch('http://127.0.0.1:8080', {
+        fetch('http://127.0.0.1:8080/api/check_login_state', {
             credentials: 'include',
             method: 'POST',
             headers: {

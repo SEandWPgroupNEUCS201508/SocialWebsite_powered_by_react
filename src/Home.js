@@ -4,8 +4,10 @@ import {
     Route,
     Link
 } from 'react-router-dom'
-import App from "./App";
 import MainPage from "./MainPage"
+import WrappedNormalLoginForm from "./LoginForm"
+import WrappedRegistrationForm from "./Register"
+
 
 
 
@@ -47,23 +49,19 @@ const BasicExample = () => (
     <div>
         <Router>
             <div>
-                <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/about">About</Link></li>
-                    <li><Link to="/topics">Topics</Link></li>
-                </ul>
+                {/*<ul>*/}
+                    {/*<li><Link to="/">Home</Link></li>*/}
+                    {/*<li><Link to="/about">About</Link></li>*/}
+                    {/*<li><Link to="/topics">Topics</Link></li>*/}
+                {/*</ul>*/}
 
-                <hr/>
-
-                <Route exact path="/" component={App}/>
-                <Route path="/about" component={MainPage}/>
+                <Route exact path="/" component={MainPage}/>
+                <Route path="/login" component={WrappedNormalLoginForm}/>
+                <Route path="/register" component={WrappedRegistrationForm}/>
                 <Route path="/topics" component={Topics}/>
             </div>
-
         </Router>
-        <p className="App-intro">
-            版权巴拉巴拉
-        </p>
+
     </div>
 
 )
