@@ -2,6 +2,7 @@ import {Form, Icon, Input, Button, Checkbox} from 'antd';
 import React, { Component } from 'react';
 import {Link} from 'react-router-dom'
 import './LoginForm.css';
+import Logo from "../common/Logo";
 
 
 class NormalLoginForm extends Component {
@@ -17,6 +18,7 @@ class NormalLoginForm extends Component {
         const { getFieldDecorator } = this.props.form;
         return (
             <div className={"form-content"}>
+                <Logo text={"不知"} fontSize={17} speed={"1.5"}/>
                 <Form onSubmit={this.handleSubmit} className="login-form" action="http://127.0.0.1:8080/api/check_login_state">
                 <Form.Item>
                     {getFieldDecorator('userName', {
@@ -44,7 +46,6 @@ class NormalLoginForm extends Component {
                         Log in
                     </Button>
                     Or <Link to="/register">register now!</Link>
-                    {/*Or <a href="./register">register now!</a>*/}
                 </Form.Item>
             </Form>
             </div>

@@ -1,14 +1,16 @@
-import React from 'react'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import 'antd/dist/antd.css';
+import registerServiceWorker from './registerServiceWorker';
 import {
     BrowserRouter as Router,
     Route,
     Link
 } from 'react-router-dom'
-import MainPage from "./MainPage"
-import WrappedNormalLoginForm from "./LoginForm"
-import WrappedRegistrationForm from "./Register"
-
-
+import MainPage from "./main/MainPage"
+import WrappedNormalLoginForm from "./sign/LoginForm"
+import WrappedRegistrationForm from "./sign/Register"
 
 
 const Topic = ({ match }) => (
@@ -45,16 +47,10 @@ const Topics = ({ match }) => (
     </div>
 )
 
-const BasicExample = () => (
+const WebsiteRouter = () => (
     <div>
         <Router>
             <div>
-                {/*<ul>*/}
-                    {/*<li><Link to="/">Home</Link></li>*/}
-                    {/*<li><Link to="/about">About</Link></li>*/}
-                    {/*<li><Link to="/topics">Topics</Link></li>*/}
-                {/*</ul>*/}
-
                 <Route exact path="/" component={MainPage}/>
                 <Route path="/login" component={WrappedNormalLoginForm}/>
                 <Route path="/register" component={WrappedRegistrationForm}/>
@@ -65,5 +61,8 @@ const BasicExample = () => (
     </div>
 
 )
+ReactDOM.render(<div>
+    <WebsiteRouter/>
+</div>, document.getElementById('root'));
 
-export default BasicExample
+registerServiceWorker();
