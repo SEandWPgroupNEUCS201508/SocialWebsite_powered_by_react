@@ -61,6 +61,32 @@ const WebsiteRouter = () => (
     </div>
 
 )
+
+
+function disabledMouseWheel() {
+    document.addEventListener('DOMMouseScroll', scrollFunc, false);  //W3C
+    window.onmousewheel = document.onmousewheel = scrollFunc;//IE/Opera/Chrome
+}
+
+function scrollFunc(e) {
+    // let direct = 0;
+
+    // let t1 = document.getElementById("wheelDelta");
+    // let t2 = document.getElementById("detail");
+    // if (e.wheelDelta) {//IE/Opera/Chrome
+    //     t1.value = e.wheelDelta;
+    // } else if (e.detail) {//Firefox
+    //     t2.value = e.detail;
+    // }
+    // console.log(direct);
+    // return false;
+    console.dir(e);
+
+    return true;
+}
+
+// window.onload=disabledMouseWheel;
+
 ReactDOM.render(<div>
     <WebsiteRouter/>
 </div>, document.getElementById('root'));

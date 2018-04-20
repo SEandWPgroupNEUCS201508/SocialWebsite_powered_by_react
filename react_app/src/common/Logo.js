@@ -8,7 +8,7 @@ class Logo extends Component {
     render() {
         return (
             <div className={"form-content"}>
-                <svg viewBox="0 0 100 20">
+                <svg viewBox="0 0 100 20" style={{ fontWeight: "bold", maxWidth: "200px",height: "auto" }}>
                     <defs>
                         <pattern id="wave" x="0" y="0" width="120" height="20" patternUnits="userSpaceOnUse">
                             <path id="wavePath"
@@ -25,10 +25,10 @@ class Logo extends Component {
                             </path>
                         </pattern>
                     </defs>
-                    <text text-anchor="middle" x="50" y="15" font-size={this.props.fontSize} fill="url(#wave)" fill-opacity="0.6">
+                    <text textAnchor="middle" x="50" y="15" fontSize={this.props.fontSize} fill="url(#wave)" fillOpacity="0.6">
                         {this.props.text}
                     </text>
-                    <text text-anchor="middle" x="50" y="15" font-size={this.props.fontSize} fill="#326384" fill-opacity="0.1">
+                    <text textAnchor="middle" x="50" y="15" fontSize={this.props.fontSize} fill="#326384" fillOpacity="0.1">
                         {this.props.text}
                     </text>
                 </svg>

@@ -7,17 +7,41 @@ const { Header, Content, Footer, Sider } = Layout;
 
 const styles = theme => ({
     header: {
-        background: "#fff",
+        width:"100%",
+        background: "#ddd",
         padding: 0,
+        position:"absolute",
+        zIndex:5,
+        top:0,
+        height:"48px",
+        lineHeight:"48px",
     },
     question_list:{
+        // height:"100%",
 
     },
+    question_list_content:{
+        padding:0,
+        height:"100%",
+        background: '#fff',
+        minHeight: 360
+    },
     mainPageContent:{
+        margin:"16px 0 0 0",
+        width:"100%",
+        overflow:"auto",
+        top:"48px",
+        position:"absolute",
+        zIndex:10,
+        bottom:"0px",
+        padding:0,
 
     },
     mainPageRoot: {
-        flexGrow: 1,
+        height:"100%",
+        width:"100%",
+        margin:0,
+        padding:0,
     }
     ,
 });
@@ -59,6 +83,7 @@ class MainPage extends Component{
 
     componentDidMount() {
         this.getQuestionList();
+
     }
     componentWillUnmount() {
 
@@ -70,7 +95,7 @@ class MainPage extends Component{
         return (
             <Layout className={classes.mainPageRoot} >
                 <Header  className={classes.header}>
-                    <Logo text={"不知"} fontSize={17} speed={"1.5"}/>
+                    <Logo text={"不知"} fontSize={"17"} speed={"1.5"}/>
                 </Header>
 
                 <Layout className={classes.mainPageContent} >
@@ -98,8 +123,8 @@ class MainPage extends Component{
                             </Menu.Item>
                         </Menu>
                     </Sider>
-                    <Content style={{ margin: '24px 16px 16px 16px' }}>
-                        <div className={classes.question_list} style={{ padding: 24, background: '#fff', minHeight: 360 }}>
+                    <Content className={classes.question_list_content}>
+                        <div className={classes.question_list}>
                             <QuestionList jsonData={this.state.content}/>
                         </div>
                     </Content>

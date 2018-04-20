@@ -7,7 +7,6 @@ import Grid from 'material-ui/Grid';
 const styles = theme => ({
     root: {
         height:"100%",
-        overflowY: "scroll",
     },
 });
 
