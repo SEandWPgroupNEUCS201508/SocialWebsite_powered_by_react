@@ -1,49 +1,39 @@
 import React, { Component } from 'react';
 import QuestionList from "./QuestionList";
-import { Layout, Menu, Icon } from 'antd';
+import { Layout, Menu, Icon ,Row, Col} from 'antd';
 import Logo from "../common/Logo";
+import QuestionEditor from "../common/Editor";
 import {withStyles} from "material-ui/styles/index";
+import ChannelList from "./ChannelList";
+import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
+import ChannelSymbol from "../common/ChannelSymbol";
 const { Header, Content, Footer, Sider } = Layout;
 
 const styles = theme => ({
-    header: {
-        width:"100%",
-        background: "#ddd",
-        padding: 0,
-        position:"absolute",
-        zIndex:5,
-        top:0,
-        height:"48px",
-        lineHeight:"48px",
-    },
-    question_list:{
-        // height:"100%",
 
-    },
-    question_list_content:{
-        padding:0,
-        height:"100%",
-        background: '#fff',
-        minHeight: 360
-    },
-    mainPageContent:{
-        margin:"16px 0 0 0",
+    mainPageQuestion:{
+        margin:0,
+        padding:"32px 0 0 0",
         width:"100%",
         overflow:"auto",
-        top:"48px",
-        position:"absolute",
-        zIndex:10,
-        bottom:"0px",
-        padding:0,
-
+        background:"#36393E"
+    },
+    mainPageContent:{
+        background:"#36393E"
+    },
+    mainPageContentHeader:{
+        background:"#36393E",
+        color:"#FFF",
+        height:56,
+        margin:0
     },
     mainPageRoot: {
         height:"100%",
         width:"100%",
         margin:0,
         padding:0,
-    }
-    ,
+    },
+
 });
 
 
@@ -52,7 +42,8 @@ class MainPage extends Component{
     constructor(props){
         super(props);
         this.state = {
-            content:[]
+            content:[],
+            height:0
         }
     }
 
@@ -83,52 +74,54 @@ class MainPage extends Component{
 
     componentDidMount() {
         this.getQuestionList();
-
+        this.onWindowResize();
+        window.addEventListener('resize', this.onWindowResize);
     }
     componentWillUnmount() {
-
+        window.removeEventListener('resize', this.onWindowResize);
     }
 
+    onWindowResize = () => {
+        let h = window.innerHeight ;
+        this.setState({
+            height:h,
+        });
+    }
 
     render() {
         const { classes } = this.props;
         return (
             <Layout className={classes.mainPageRoot} >
-                <Header  className={classes.header}>
-                    <Logo text={"不知"} fontSize={"17"} speed={"1.5"}/>
-                </Header>
-
-                <Layout className={classes.mainPageContent} >
-                    <Sider
-                        breakpoint="lg"
-                        collapsedWidth="0"
-                        onCollapse={(collapsed, type) => { console.log(collapsed, type); }}>
-                        <div className="logo" />
-                        <Menu theme="dark" mode="inline" defaultSelectedKeys={['4']}>
-                            <Menu.Item key="1">
-                                <Icon type="user" />
-                                <span className="nav-text">nav 1</span>
-                            </Menu.Item>
-                            <Menu.Item key="2">
-                                <Icon type="video-camera" />
-                                <span className="nav-text">nav 2</span>
-                            </Menu.Item>
-                            <Menu.Item key="3">
-                                <Icon type="upload" />
-                                <span className="nav-text">nav 3</span>
-                            </Menu.Item>
-                            <Menu.Item key="4">
-                                <Icon type="user" />
-                                <span className="nav-text">nav 4</span>
-                            </Menu.Item>
-                        </Menu>
-                    </Sider>
-                    <Content className={classes.question_list_content}>
-                        <div className={classes.question_list}>
-                            <QuestionList jsonData={this.state.content}/>
+                <Row >
+                    <Col span={6} >
+                        <div style={{height:this.state.height}}>
+                            <ChannelList jsonData={this.state.content}/>
                         </div>
-                    </Content>
-                </Layout>
+                    </Col>
+                    <Col span={18}>
+                        <Layout className={classes.mainPageContent} >
+                            <Header  theme="light" style={{margin:0,padding:0,background:"#36393E"}}>
+                                <Card className={classes.mainPageContentHeader} >
+                                    <ChannelSymbol/>
+                                    <CardContent>
+                                        CHANNEL
+                                    </CardContent>
+
+                                </Card>
+                            </Header>
+                            <Layout className={classes.mainPageQuestion} style={{height:this.state.height- 48 - 64 -16}} >
+                                <Content >
+                                    <QuestionList jsonData={this.state.content}/>
+                                </Content>
+                            </Layout>
+                            <Footer style={{margin:8,padding:0}}>
+                                <QuestionEditor/>
+                            </Footer>
+                        </Layout>
+                    </Col>
+                </Row>
+
+
             </Layout>
         );
     }
