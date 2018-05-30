@@ -12,6 +12,7 @@ import FaceIcon from '@material-ui/icons/Face';
 import SendIcon from '@material-ui/icons/Send'
 
 
+
 import './editor.css';
 import baseUrl from "./baseUrl";
 
@@ -47,7 +48,7 @@ const styles = theme => ({
 });
 
 
-class QuestionEditor extends Component {
+class CommentEditor extends Component {
     constructor(props){
         super(props);
         this.state = {
@@ -66,16 +67,15 @@ class QuestionEditor extends Component {
             //todo 发送消息字符大于 5 提示
             notification.open({
                 message: '注意',
-                description: '动态长度要大于5！',
+                description: '评论长度要大于5！',
             });
             return;
         }
-        let title = this.props.username;
-        let user_id = this.props.user_id;
-        let forum = this.props.channel.id;
-
-        let data = 'title='+title+'&content='+content+'&user_id='+user_id+'&forum='+forum;
-        fetch(baseUrl+'/publish_article', {
+        let user_id = 100;
+        let comment_id = 0;
+        let data = 'user_id='+user_id+'&article_id='+this.props.article_id+
+            '&comment_id='+comment_id+'&comment='+content;
+        fetch(baseUrl+'/publish_comment', {
             method: "POST",
             credentials: 'include',
             headers:{
@@ -103,7 +103,7 @@ class QuestionEditor extends Component {
                 }else{
                     notification.open({
                         message: '注意',
-                        description: '动态发表失败',
+                        description: '评论发表失败',
                     });
                     //todo 提示发文章错误
                 }
@@ -141,7 +141,7 @@ class QuestionEditor extends Component {
                     </Popover>
                 </div>
                 <TextArea className={"text-area"}
-                          placeholder={"在 #"+this.props.channel.name+" 发消息"}
+                          placeholder={"评论一下吧"}
                           onChange={this.onEdit}
                           value={this.state.editorContent}
                           autosize={{ minRows: 1, maxRows: 6 }} />
@@ -155,8 +155,8 @@ class QuestionEditor extends Component {
     }
 }
 
-QuestionEditor.propTypes = {
+CommentEditor.propTypes = {
     classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(QuestionEditor);
+export default withStyles(styles)(CommentEditor);

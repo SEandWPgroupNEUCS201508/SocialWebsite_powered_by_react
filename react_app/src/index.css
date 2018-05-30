@@ -4,14 +4,4 @@ html,body {
     font-family: sans-serif;
     height: 100%;
     width: 100%;
-    position: fixed;
-    top:0;
-    bottom: 0;
-    /*display: -webkit-flex; !* Safari *!*/
-    /*display: flex;*/
-    /*flex-direction: row-reverse;*/
-    /*flex-wrap: nowrap;*/
-    /*justify-content: flex-start;*/
-    /*align-items: flex-start;*/
-
 }

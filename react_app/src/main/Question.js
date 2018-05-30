@@ -1,23 +1,34 @@
 import {Component} from "react";
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import classnames from 'classnames';
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
-import Collapse from 'material-ui/transitions/Collapse';
-import Avatar from 'material-ui/Avatar';
-import IconButton from 'material-ui/IconButton';
-import Typography from 'material-ui/Typography';
-import red from 'material-ui/colors/red';
+import Collapse from '@material-ui/core/Collapse';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import Typography from '@material-ui/core/Typography';
+import red from '@material-ui/core/colors/red';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import ShareIcon from '@material-ui/icons/Share';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import Card from '@material-ui/core/Card';
+import CardHeader from '@material-ui/core/CardHeader';
+import CardMedia from '@material-ui/core/CardMedia';
+import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+import baseUrl from "../common/baseUrl";
+import CommentEditor from "../common/CommentEditor";
+import { Badge } from 'antd';
+
 
 const styles = theme => ({
     card: {
-        maxWidth:"400px",
+        backgroundColor:"#484B52",
+        maxWidth:"800px",
         margin:"0 auto 32px auto",
+        fontColor:"#FFFFFF",
+
     },
     media: {
         height: 0,
@@ -45,7 +56,49 @@ const styles = theme => ({
 class Question extends Component {
     constructor(props){
         super(props);
-        this.state = { expanded: false };
+        this.state = {
+            expanded: false ,
+            comment_list:[],
+            comment_num:0
+        };
+    }
+
+    componentDidMount() {
+        this.getCommentList();
+    }
+
+    getCommentList =()=> {
+        let data = 'article_id='+this.props.article_id;
+
+        fetch(baseUrl+'/article_comment', {
+            method: "POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data}).
+        then((response) =>{
+            if(response.status !== 200 && response.status !== 302){
+                return null;
+            }
+            return response.json()
+        },(error)=>{
+            console.log(error);
+        }).
+        then((json)=>{
+            console.log(json);
+            this.setState({
+                    comment_list:json.comment_list,
+                    comment_num:json.comment_list.length,
+                }
+            )
+        },(error)=>{
+            console.log(error);
+        })
+    };
+
+    onSendData = () =>{
+        this.getCommentList();
     }
 
     handleExpandClick = () => {
@@ -54,6 +107,12 @@ class Question extends Component {
         });
     };
 
+    gotoChat = () => {
+        let userId = this.props.user;
+        this.props.baseHistory.push({pathname:'/chat',state:{he:userId,me:this.props.me}})
+        // this.props.baseHistory.push('/chat?user='+userId)
+    }
+
     render() {
         const { classes } = this.props;
 
@@ -61,17 +120,19 @@ class Question extends Component {
             <Card className={classes.card}>
                 <CardHeader
                     avatar={
-                        <Avatar aria-label="Recipe" className={classes.avatar}>
-                            匿名
-                        </Avatar>
+                        <IconButton onClick={this.gotoChat}>
+                            <Avatar aria-label="Recipe" className={classes.avatar}>
+                                匿
+                            </Avatar>
+                        </IconButton>
                     }
                     action={
                         <IconButton>
-                            <MoreVertIcon />
+                            <MoreVertIcon style={{color:"#7F8186",position:'relative',top:-10}}/>
                         </IconButton>
                     }
-                    title="Shrimp and Chorizo Paella"
-                    subheader="September 14, 2016"
+                    title={this.props.title}
+                    subheader={this.props.date+" "+this.props.time}
                 />
                 {this.props.media &&
                     <CardMedia
@@ -82,54 +143,54 @@ class Question extends Component {
                 }
 
                 <CardContent>
-                    <Typography component="p">
-                        {this.props.text}
+                    <Typography component="div">
+                        <div
+                            style={{color:"#C3C4C5"}}
+                            dangerouslySetInnerHTML={{__html:this.props.text}}/>
                     </Typography>
                 </CardContent>
                 <CardActions className={classes.actions} disableActionSpacing>
                     <IconButton aria-label="Add to favorites">
-                        <FavoriteIcon />
+                        <FavoriteIcon style={{color:"#7F8186",position:'relative',top:-10}}/>
                     </IconButton>
 
-                    <IconButton aria-label="Share">
-                        <ShareIcon />
-                    </IconButton>
                     <IconButton aria-label="Show more"
                         className={classnames(classes.expand, {
                             [classes.expandOpen]: this.state.expanded,
                         })}
                         onClick={this.handleExpandClick}
                         aria-expanded={this.state.expanded}>
-                        <ExpandMoreIcon />
+                        <div style={{position:'relative',left:60,top:-30}}>
+                            <Badge count={this.state.comment_num}/>
+                        </div>
+                        {this.state.comment_num === 0
+                        ?
+                        <ExpandMoreIcon style={{color:"#7F8186",position:'relative',top:-10}}/>
+                            : <ExpandMoreIcon style={{color:"#7F8186",position:'relative',top:-10,left:-10}}/>
+
+                        }
+
                     </IconButton>
                 </CardActions>
                 <Collapse in={this.state.expanded} timeout="auto" unmountOnExit>
                     <CardContent>
-                        <Typography paragraph variant="body2">
-                            Method:
-                        </Typography>
-                        <Typography paragraph>
-                            Heat 1/2 cup of the broth in a pot until simmering, add saffron and set aside for 10
-                            minutes.
-                        </Typography>
-                        <Typography paragraph>
-                            Heat oil in a (14- to 16-inch) paella pan or a large, deep skillet over medium-high
-                            heat. Add chicken, shrimp and chorizo, and cook, stirring occasionally until lightly
-                            browned, 6 to 8 minutes. Transfer shrimp to a large plate and set aside, leaving
-                            chicken and chorizo in the pan. Add pimentón, bay leaves, garlic, tomatoes, onion,
-                            salt and pepper, and cook, stirring often until thickened and fragrant, about 10
-                            minutes. Add saffron broth and remaining 4 1/2 cups chicken broth; bring to a boil.
-                        </Typography>
-                        <Typography paragraph>
-                            Add rice and stir very gently to distribute. Top with artichokes and peppers, and
-                            cook without stirring, until most of the liquid is absorbed, 15 to 18 minutes.
-                            Reduce heat to medium-low, add reserved shrimp and mussels, tucking them down into
-                            the rice, and cook again without stirring, until mussels have opened and rice is
-                            just tender, 5 to 7 minutes more. (Discard any mussels that don’t open.)
-                        </Typography>
-                        <Typography>
-                            Set aside off of the heat to let rest for 10 minutes, and then serve.
-                        </Typography>
+                        <CommentEditor
+                            article_id={this.props.article_id}
+                            onSendData={this.onSendData}
+                        />
+                        <br/>
+                        { this.state.comment_list
+                        &&
+                        this.state.comment_list.map((v)=>
+                            <div>
+                                <p style={{color:"#7F8186",margin:4}}>
+                                    {v.comment}
+                                </p>
+                                <hr />
+                            </div>
+
+                        )
+                        }
                     </CardContent>
                 </Collapse>
             </Card>

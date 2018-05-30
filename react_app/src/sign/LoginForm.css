@@ -9,5 +9,12 @@
 }
 
 .form-content{
-    align-self:center;
+    width: 100%;
+    margin:0;
+    padding:0;
+    display:flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content:center;
+    align-items:center;
 }

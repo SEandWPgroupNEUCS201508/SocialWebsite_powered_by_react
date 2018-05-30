@@ -3,22 +3,27 @@ import QuestionList from "./QuestionList";
 import { Layout, Menu, Icon ,Row, Col} from 'antd';
 import Logo from "../common/Logo";
 import QuestionEditor from "../common/Editor";
-import {withStyles} from "material-ui/styles/index";
+import {withStyles} from "@material-ui/core/styles/index";
 import ChannelList from "./ChannelList";
-import Card, { CardHeader, CardMedia, CardContent, CardActions } from 'material-ui/Card';
+import Card from '@material-ui/core/Card';
 import ChannelSymbol from "../common/ChannelSymbol";
+import {Link} from 'react-router-dom';
+import baseUrl from '../common/baseUrl'
+
+
 const { Header, Content, Footer, Sider } = Layout;
+
 
 const styles = theme => ({
 
     mainPageQuestion:{
         margin:0,
-        padding:"32px 0 0 0",
+        padding:0,
         width:"100%",
-        overflow:"auto",
         background:"#36393E"
     },
     mainPageContent:{
+        overFlow:"hidden",
         background:"#36393E"
     },
     mainPageContentHeader:{
@@ -33,47 +38,124 @@ const styles = theme => ({
         margin:0,
         padding:0,
     },
+    mainPageScrollBar:{
+
+    },
+    channelHeader:{
+        display:"flex",
+        flexDirection: "row",
+        flexWrap: "nowrap",
+        justifyContent:"left",
+        alignItems:"center",
+    }
 
 });
 
+function ListItem(props){
+    return <li><h3 style={{color:props.color}}>{props.user+'    '+props.time}</h3><h3 style={{color:"black"}}>{props.value}</h3>
+    </li>
+}
 
+function NumberList(props) {
+    const numbers = props.numbers;
+    return (
+        <div>
+            {numbers.map((number) =>
+                <ListItem
+                    user={number.user}
+                    value={number.content}
+                    time={number.time}
+                    color={number.color}
+                />
+            )}
+        </div>
+    );
+}
+
+let numbers = [];
 
 class MainPage extends Component{
+
     constructor(props){
         super(props);
         this.state = {
             content:[],
-            height:0
+            height:0,
+            channels:[{id:"welcome",name:"欢迎"},{id:"study",name:"学习"},
+                {id:"soul",name:"情感"},{id:"computer",name:"计算机"},
+                {id:"chat",name:"闲聊"},{id:"art",name:"艺术"},
+                {id:"test",name:"测试"},],
+            currentChannel:{id:"soul",name:"情感"},
+            user_id:0,
+            username:"",
+            email:""
         }
     }
 
 
-    getQuestionList =()=> {
-        fetch('http://127.0.0.1:8080/api/shuoshuo', {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
+
+    getUserInfo = () =>{
+        fetch(baseUrl+'/user_profile', {
+            method: "POST",
+            credentials: 'include',
+        })
+        .then((response) =>{
+            if(response.status !== 200 && response.status !== 302){
+                alert("用户暂未登录")
+                this.props.history.push('/ulogin');
+                return null;
             }
-        }).then((data) => {
-            if (data.status !== 200) {
-                console.log('Looks like there was a problem. Status Code: ' + data.status);
-                return;
-            }
-            let dj = data.json();
-            dj.then((json)=>{
-                this.setState({
-                    content:json.content
-                });
+            return response.json();
+        },(error)=>{
+            console.log(error);
+        })
+        .then((json)=>{
+            this.setState({
+                user_id: json.user_id,
+                username: json.username,
+                email:json.email
             })
+        },(error)=>{
+            console.log(error);
+            alert("用户暂未登录")
+            this.props.history.push('/ulogin');
         })
-        .catch(function(error) {
-            console.log('request failed', error)
-        })
+    }
+
+    getQuestionList =(forum)=> {
+        let last_id = 2147483647;
+        let limit_num = 100;
+        let data = 'forum='+forum+'&last_id='+last_id+'&limit_num='+limit_num;
+
+        fetch(baseUrl+'/forum', {
+            method: "POST",
+            credentials: 'include',
+            headers:{
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: data}).
+        then((response) =>{
+                if(response.status !== 200 && response.status !== 302){
+                    return null;
+                }
+                return response.json()
+            },(error)=>{
+                console.log(error);
+            }).
+        then((json)=>{
+                console.log(json);
+                this.setState({
+                        content:json
+                    }
+                )
+            },(error)=>{
+                console.log(error);
+            })
     };
 
     componentDidMount() {
-        this.getQuestionList();
+        this.getUserInfo();
+        this.getQuestionList(this.state.currentChannel.id);
         this.onWindowResize();
         window.addEventListener('resize', this.onWindowResize);
     }
@@ -82,41 +164,71 @@ class MainPage extends Component{
     }
 
     onWindowResize = () => {
-        let h = window.innerHeight ;
+        let h = document.body.clientHeight ;
         this.setState({
             height:h,
         });
     }
 
+    onCurrentChannelChange = (channel) =>{
+        this.setState({
+            currentChannel:channel
+        },()=>{
+            this.getQuestionList(channel.id);
+        })
+    }
+
+
+    onSendData = () =>{
+        this.getQuestionList(this.state.currentChannel.id);
+    }
+
+
     render() {
         const { classes } = this.props;
         return (
             <Layout className={classes.mainPageRoot} >
-                <Row >
-                    <Col span={6} >
-                        <div style={{height:this.state.height}}>
-                            <ChannelList jsonData={this.state.content}/>
+                <Row type={"flex"}>
+                    <Col style={{width:300}} >
+                        <div style={{height:this.state.height,overflow:"auto",background:"#2F3136"}}>
+                            <ChannelList
+                                onCurrentChannelChange={this.onCurrentChannelChange}
+                                choice={this.state.currentChannel}
+                                jsonData={this.state.channels}/>
                         </div>
                     </Col>
-                    <Col span={18}>
+                    <Col style={{flexGrow : 2}} >
                         <Layout className={classes.mainPageContent} >
                             <Header  theme="light" style={{margin:0,padding:0,background:"#36393E"}}>
                                 <Card className={classes.mainPageContentHeader} >
-                                    <ChannelSymbol/>
-                                    <CardContent>
-                                        CHANNEL
-                                    </CardContent>
-
+                                    <div className={classes.channelHeader}>
+                                        <div>
+                                            <ChannelSymbol />
+                                        </div>
+                                        <p style={{minWidth:200 ,position:'relative',top:-6}}>
+                                            {this.state.currentChannel.name}
+                                        </p>
+                                    </div>
                                 </Card>
                             </Header>
-                            <Layout className={classes.mainPageQuestion} style={{height:this.state.height- 48 - 64 -16}} >
-                                <Content >
-                                    <QuestionList jsonData={this.state.content}/>
+                            <Layout className={classes.mainPageQuestion}
+                                    style={{height:this.state.height- 48 - 64 -16,
+                                        overflowY:"scroll",}} >
+                                <Content style={{padding:"32px 0 0 0"}}>
+                                    <QuestionList
+                                        jsonData={this.state.content}
+                                        user={this.state.user_id}
+                                        baseHistory={this.props.history}/>
                                 </Content>
                             </Layout>
-                            <Footer style={{margin:8,padding:0}}>
-                                <QuestionEditor/>
-                            </Footer>
+                            <div style={{margin:8,padding:0,backgroundColor:"#484B52"}}>
+                                <QuestionEditor
+                                    onSendData={this.onSendData}
+                                    channel={this.state.currentChannel}
+                                    username={this.state.username}
+                                    user_id={this.state.user_id}
+                                />
+                            </div>
                         </Layout>
                     </Col>
                 </Row>

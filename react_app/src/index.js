@@ -11,7 +11,7 @@ import {
 import MainPage from "./main/MainPage"
 import WrappedNormalLoginForm from "./sign/LoginForm"
 import WrappedRegistrationForm from "./sign/Register"
-
+import ChatPage from "./main/ChatPage"
 
 const Topic = ({ match }) => (
     <div>
@@ -52,8 +52,9 @@ const WebsiteRouter = () => (
         <Router>
             <div>
                 <Route exact path="/" component={MainPage}/>
-                <Route path="/login" component={WrappedNormalLoginForm}/>
-                <Route path="/register" component={WrappedRegistrationForm}/>
+                <Route path="/chat" component={ChatPage}/>
+                <Route path="/ulogin" component={WrappedNormalLoginForm}/>
+                <Route path="/uregister" component={WrappedRegistrationForm}/>
                 <Route path="/topics" component={Topics}/>
             </div>
         </Router>
@@ -63,32 +64,6 @@ const WebsiteRouter = () => (
 )
 
 
-function disabledMouseWheel() {
-    document.addEventListener('DOMMouseScroll', scrollFunc, false);  //W3C
-    window.onmousewheel = document.onmousewheel = scrollFunc;//IE/Opera/Chrome
-}
-
-function scrollFunc(e) {
-    // let direct = 0;
-
-    // let t1 = document.getElementById("wheelDelta");
-    // let t2 = document.getElementById("detail");
-    // if (e.wheelDelta) {//IE/Opera/Chrome
-    //     t1.value = e.wheelDelta;
-    // } else if (e.detail) {//Firefox
-    //     t2.value = e.detail;
-    // }
-    // console.log(direct);
-    // return false;
-    console.dir(e);
-
-    return true;
-}
-
-// window.onload=disabledMouseWheel;
-
-ReactDOM.render(<div>
-    <WebsiteRouter/>
-</div>, document.getElementById('root'));
+ReactDOM.render(<div><WebsiteRouter/></div>, document.getElementById('root'));
 
 registerServiceWorker();
